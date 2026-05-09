@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<resources>
+  <property id="bridgeUrl" type="string">http://127.0.0.1:8790/garmin/latest</property>
+  <property id="autoRefresh" type="boolean">true</property>
+  <property id="hapticAlerts" type="boolean">true</property>
+  <property id="petDisplayName" type="string">Codex Pet</property>
+  <property id="themeSurface" type="number">0</property>
+  <property id="themePanel" type="number">1118742</property>
+  <property id="themeSelection" type="number">2431839</property>
+  <property id="themeInk" type="number">16777215</property>
+  <property id="themeSubtle" type="number">11052726</property>
+  <property id="themeAccent" type="number">10120447</property>
+  <property id="themeReview" type="number">3328255</property>
+  <property id="themeGood" type="number">4384623</property>
+  <property id="themeWarn" type="number">16754516</property>
+</resources>

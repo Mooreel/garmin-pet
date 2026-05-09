@@ -1,0 +1,73 @@
+{
+  "pet": "monk",
+  "displayName": "Monk",
+  "state": "idle",
+  "source": "bundled example pet",
+  "cell": {
+    "width": 192,
+    "height": 208
+  },
+  "largeExportedSize": 160,
+  "stateLargeFrames": {
+    "idle": [
+      "resources/images/pet_large_idle_0.png",
+      "resources/images/pet_large_idle_1.png",
+      "resources/images/pet_large_idle_2.png",
+      "resources/images/pet_large_idle_3.png",
+      "resources/images/pet_large_idle_4.png",
+      "resources/images/pet_large_idle_5.png",
+      "resources/images/pet_large_idle_6.png",
+      "resources/images/pet_large_idle_7.png"
+    ],
+    "waving": [
+      "resources/images/pet_large_waving_0.png",
+      "resources/images/pet_large_waving_1.png",
+      "resources/images/pet_large_waving_2.png",
+      "resources/images/pet_large_waving_3.png",
+      "resources/images/pet_large_waving_4.png",
+      "resources/images/pet_large_waving_5.png",
+      "resources/images/pet_large_waving_6.png",
+      "resources/images/pet_large_waving_7.png"
+    ],
+    "jumping": [
+      "resources/images/pet_large_jumping_0.png",
+      "resources/images/pet_large_jumping_1.png",
+      "resources/images/pet_large_jumping_2.png",
+      "resources/images/pet_large_jumping_3.png",
+      "resources/images/pet_large_jumping_4.png",
+      "resources/images/pet_large_jumping_5.png",
+      "resources/images/pet_large_jumping_6.png",
+      "resources/images/pet_large_jumping_7.png"
+    ],
+    "failed": [
+      "resources/images/pet_large_failed_0.png",
+      "resources/images/pet_large_failed_1.png",
+      "resources/images/pet_large_failed_2.png",
+      "resources/images/pet_large_failed_3.png",
+      "resources/images/pet_large_failed_4.png",
+      "resources/images/pet_large_failed_5.png",
+      "resources/images/pet_large_failed_6.png",
+      "resources/images/pet_large_failed_7.png"
+    ],
+    "review": [
+      "resources/images/pet_large_review_0.png",
+      "resources/images/pet_large_review_1.png",
+      "resources/images/pet_large_review_2.png",
+      "resources/images/pet_large_review_3.png",
+      "resources/images/pet_large_review_4.png",
+      "resources/images/pet_large_review_5.png",
+      "resources/images/pet_large_review_6.png",
+      "resources/images/pet_large_review_7.png"
+    ],
+    "sleeping": [
+      "resources/images/pet_large_sleeping_0.png",
+      "resources/images/pet_large_sleeping_1.png",
+      "resources/images/pet_large_sleeping_2.png",
+      "resources/images/pet_large_sleeping_3.png",
+      "resources/images/pet_large_sleeping_4.png",
+      "resources/images/pet_large_sleeping_5.png",
+      "resources/images/pet_large_sleeping_6.png",
+      "resources/images/pet_large_sleeping_7.png"
+    ]
+  }
+}

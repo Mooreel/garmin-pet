@@ -1,0 +1,110 @@
+{
+  "default": "fr265s",
+  "devices": [
+    {
+      "id": "fr265s",
+      "name": "Forerunner 265S",
+      "family": "Forerunner",
+      "screen": { "width": 360, "height": 360, "shape": "round" },
+      "frame": {
+        "image": "/assets/devices/fr265s.png",
+        "width": 571,
+        "height": 785,
+        "screen": { "x": 113, "y": 214, "width": 360, "height": 360 }
+      },
+      "recommended": true,
+      "buildEnabled": true
+    },
+    {
+      "id": "fr965",
+      "name": "Forerunner 965",
+      "family": "Forerunner",
+      "screen": { "width": 454, "height": 454, "shape": "round" },
+      "frame": {
+        "image": "/assets/devices/fr965.png",
+        "width": 682,
+        "height": 913,
+        "screen": { "x": 113, "y": 233, "width": 454, "height": 454 }
+      },
+      "buildEnabled": true
+    },
+    {
+      "id": "fenix7",
+      "name": "fenix 7",
+      "family": "fenix",
+      "screen": { "width": 260, "height": 260, "shape": "round" },
+      "frame": {
+        "image": "/assets/devices/fenix7.png",
+        "width": 409,
+        "height": 560,
+        "screen": { "x": 77, "y": 146, "width": 260, "height": 260 }
+      },
+      "buildEnabled": true
+    },
+    {
+      "id": "fenix7s",
+      "name": "fenix 7S",
+      "family": "fenix",
+      "screen": { "width": 240, "height": 240, "shape": "round" },
+      "frame": {
+        "image": "/assets/devices/fenix7s.png",
+        "width": 376,
+        "height": 511,
+        "screen": { "x": 69, "y": 138, "width": 240, "height": 240 }
+      },
+      "buildEnabled": true
+    },
+    {
+      "id": "fenix7x",
+      "name": "fenix 7X",
+      "family": "fenix",
+      "screen": { "width": 280, "height": 280, "shape": "round" },
+      "frame": {
+        "image": "/assets/devices/fenix7x.png",
+        "width": 430,
+        "height": 600,
+        "screen": { "x": 76, "y": 141, "width": 280, "height": 280 }
+      },
+      "buildEnabled": true
+    },
+    {
+      "id": "fenix847mm",
+      "name": "fenix 8",
+      "family": "fenix",
+      "screen": { "width": 454, "height": 454, "shape": "round" },
+      "frame": {
+        "image": "/assets/devices/fenix8.png",
+        "width": 713,
+        "height": 921,
+        "screen": { "x": 134, "y": 221, "width": 454, "height": 454 }
+      },
+      "buildEnabled": true
+    },
+    {
+      "id": "epix2",
+      "name": "epix Gen 2",
+      "family": "epix",
+      "screen": { "width": 416, "height": 416, "shape": "round" },
+      "frame": {
+        "image": "/assets/devices/epix2.png",
+        "width": 640,
+        "height": 925,
+        "screen": { "x": 115, "y": 268, "width": 416, "height": 416 }
+      },
+      "buildEnabled": true
+    },
+    {
+      "id": "venu3",
+      "name": "Venu 3",
+      "family": "Venu",
+      "screen": { "width": 454, "height": 454, "shape": "round" },
+      "frame": {
+        "image": "/assets/devices/venu3.png",
+        "width": 636,
+        "height": 882,
+        "screen": { "x": 91, "y": 206, "width": 454, "height": 454 }
+      },
+      "buildEnabled": true
+    }
+  ]
+}

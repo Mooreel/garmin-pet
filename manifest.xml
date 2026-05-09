@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<iq:manifest xmlns:iq="http://www.garmin.com/xml/connectiq" version="3">
+  <iq:application
+    id="a6d39f4e-9719-4df7-8f26-b14892094bb5"
+    type="watch-app"
+    name="@Strings.AppName"
+    entry="CodexPetApp"
+    launcherIcon="@Drawables.LauncherIcon"
+    minSdkVersion="3.2.0">
+    <iq:products>
+      <iq:product id="fr265s"/>
+      <iq:product id="fr965"/>
+      <iq:product id="fenix7"/>
+      <iq:product id="fenix7s"/>
+      <iq:product id="fenix7x"/>
+      <iq:product id="fenix847mm"/>
+      <iq:product id="epix2"/>
+      <iq:product id="venu3"/>
+    </iq:products>
+    <iq:permissions>
+      <iq:uses-permission id="Communications"/>
+    </iq:permissions>
+    <iq:languages>
+      <iq:language>eng</iq:language>
+    </iq:languages>
+  </iq:application>
+</iq:manifest>

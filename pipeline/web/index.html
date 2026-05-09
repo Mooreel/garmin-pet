@@ -1,0 +1,201 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Garmin Pet Pipeline</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <main class="shell">
+      <section class="workspace" aria-label="Garmin pet pipeline">
+        <header class="topbar">
+          <div class="titleBlock">
+            <h1>Build a Garmin companion</h1>
+          </div>
+        </header>
+
+        <section class="runway" aria-label="Current run">
+          <div>
+            <span class="runLabel">Current stage</span>
+            <strong id="activeStepLabel">Connect</strong>
+          </div>
+          <div class="runMeter" aria-hidden="true">
+            <span id="flowMeter"></span>
+          </div>
+          <span class="runCode">PRG / MTP / CIQ</span>
+        </section>
+
+        <section id="watchBanner" class="watchBanner missing" aria-live="polite">
+          <span id="watchBadge">Watch</span>
+          <div>
+            <strong id="watchTitle">Checking Garmin connection</strong>
+            <p id="watchDetail">Looking for mounted storage or MTP access.</p>
+          </div>
+          <div class="watchActions">
+            <em id="watchAccess">Not checked</em>
+            <button id="watchRefreshBtn" class="button secondary" type="button">Check now</button>
+          </div>
+        </section>
+
+        <section class="steps" aria-label="Pipeline steps">
+          <article class="step active" data-step="connect">
+            <span>01</span>
+            <strong>Connect</strong>
+            <em id="watchState">Checking watch</em>
+          </article>
+          <article class="step" data-step="upload">
+            <span>02</span>
+            <strong>Pet</strong>
+            <em id="selectedPetFile">Drop in a package</em>
+          </article>
+          <article class="step" data-step="theme">
+            <span>03</span>
+            <strong>Setup</strong>
+            <em>Bridge and colors</em>
+          </article>
+          <article class="step" data-step="preview">
+            <span>04</span>
+            <strong>Preview</strong>
+            <em>Garmin frame check</em>
+          </article>
+          <article class="step" data-step="build">
+            <span>05</span>
+            <strong>Build</strong>
+            <em id="buildState">Waiting</em>
+          </article>
+          <article class="step" data-step="deploy">
+            <span>06</span>
+            <strong>Deploy</strong>
+            <em id="deployState">Waiting</em>
+          </article>
+        </section>
+
+        <section class="panels" aria-label="Pipeline controls">
+          <form id="configForm" class="panel configPanel">
+            <div class="panelHead">
+              <span>Setup</span>
+              <h2>Device recipe</h2>
+            </div>
+
+            <label>Watch
+              <select id="device"></select>
+            </label>
+
+            <div class="bridgeCard">
+              <label>Watch bridge
+                <input id="bridgeUrl" autocomplete="off" spellcheck="false" readonly />
+              </label>
+              <span id="bridgeMode">Auto: served by the local pipeline server</span>
+            </div>
+
+            <label>Pet name
+              <input id="petDisplayName" maxlength="32" />
+            </label>
+
+            <div class="swatches" aria-label="Theme colors">
+              <label>Accent <input id="accent" type="color" /></label>
+              <label>Done <input id="good" type="color" /></label>
+              <label>Warn <input id="warn" type="color" /></label>
+              <label>Panel <input id="panel" type="color" /></label>
+            </div>
+
+            <button class="button primary" type="submit">Save recipe</button>
+          </form>
+
+          <section class="panel uploadPanel">
+            <div class="panelHead">
+              <span>Pet</span>
+              <h2>Frame export</h2>
+            </div>
+            <div class="petDexPicker" aria-label="Petdex picker">
+              <div class="petDexTools">
+                <label>Find on Petdex
+                  <input id="petDexSearch" autocomplete="off" spellcheck="false" placeholder="Boba, dragon, cozy coder" />
+                </label>
+                <label>Sort
+                  <select id="petDexSort">
+                    <option value="popular">Popular</option>
+                    <option value="installed">Most installed</option>
+                    <option value="recent">Newest</option>
+                    <option value="alpha">A to Z</option>
+                    <option value="curated">Curated</option>
+                  </select>
+                </label>
+              </div>
+              <button id="petDexSearchBtn" class="button secondary" type="button">Search Petdex</button>
+              <div id="petDexStatus" class="petDexStatus" aria-live="polite">Search Petdex or pick from popular pets.</div>
+              <div id="petDexResults" class="petDexResults" aria-live="polite"></div>
+              <button id="importPetDexBtn" class="button primary" type="button" disabled>Import selected pet</button>
+            </div>
+            <div class="uploadDivider"><span>or manual package</span></div>
+            <label id="petDropZone" class="fileDrop" for="petFile">
+              <strong>Drop ZIP or pet folder</strong>
+              <span>Use a ZIP, one spritesheet.webp, or a folder with pet.json and spritesheet.webp.</span>
+              <input id="petFile" type="file" accept=".zip,.webp,.json" multiple />
+            </label>
+            <div id="uploadStatus" class="uploadStatus" aria-live="polite">Drop a pet to export and preview it automatically.</div>
+            <input id="petFolder" class="hiddenInput" type="file" webkitdirectory directory multiple />
+            <button id="folderBtn" class="button secondary" type="button">Choose folder</button>
+            <button id="uploadBtn" class="button primary" type="button" disabled>Re-export selected pet</button>
+          </section>
+
+          <section class="panel actions">
+            <div class="panelHead">
+              <span>Flash</span>
+              <h2>Build controls</h2>
+            </div>
+            <button id="securityBtn" class="button secondary" type="button">Run security check</button>
+            <button id="buildBtn" class="button primary" type="button" disabled>Save & build app</button>
+            <button id="deployBtn" class="button contrast" type="button">Deploy latest PRG</button>
+          </section>
+
+          <section class="panel historyPanel">
+            <div class="panelHead">
+              <span>Library</span>
+              <h2>Saved recipes</h2>
+            </div>
+            <div id="configHistory" class="configHistory" aria-live="polite">
+              <p class="emptyHistory">No saved recipes yet.</p>
+            </div>
+          </section>
+        </section>
+      </section>
+
+      <aside class="previewPane" aria-label="Garmin preview">
+        <div class="deviceMeta">
+          <div>
+            <span>Target</span>
+            <strong id="deviceName">Forerunner 265S</strong>
+          </div>
+          <span id="deviceSize">360 x 360</span>
+        </div>
+
+        <div class="watchStage">
+          <div class="previewHeader">
+            <div>
+              <span>Screen preview</span>
+              <strong id="previewScreenName">Pet home</strong>
+            </div>
+          </div>
+          <div id="watchFrame" class="watchFrame">
+            <div id="watchScreen" class="watchScreen"></div>
+          </div>
+          <div id="screenGallery" class="screenGallery" role="tablist" aria-label="Watch screens"></div>
+        </div>
+
+        <section class="jobSheet" aria-label="Job sheet">
+          <div class="sheetRow"><span>Pet</span><strong id="sheetPet">Codex Pet</strong></div>
+          <div class="sheetRow"><span>Watch</span><strong id="sheetWatch">Forerunner 265S</strong></div>
+          <div class="sheetRow"><span>Access</span><strong id="sheetWatchAccess">Checking</strong></div>
+          <div class="sheetRow"><span>Bridge</span><strong id="sheetBridge">Not saved</strong></div>
+          <div class="sheetRow"><span>Build</span><strong id="sheetBuild">Ready</strong></div>
+        </section>
+
+        <pre id="log" class="log">Ready.</pre>
+      </aside>
+    </main>
+    <script src="/preview.js"></script>
+    <script src="/app.js"></script>
+  </body>
+</html>

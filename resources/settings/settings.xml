@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<settings>
+  <setting propertyKey="@Properties.bridgeUrl" title="@Strings.BridgeUrlTitle" prompt="@Strings.BridgeUrlPrompt">
+    <settingConfig type="alphaNumeric" required="true" maxLength="160"/>
+  </setting>
+  <setting propertyKey="@Properties.autoRefresh" title="@Strings.RefreshTitle" prompt="@Strings.RefreshPrompt">
+    <settingConfig type="boolean" required="true"/>
+  </setting>
+  <setting propertyKey="@Properties.hapticAlerts" title="@Strings.HapticsTitle" prompt="@Strings.HapticsPrompt">
+    <settingConfig type="boolean" required="true"/>
+  </setting>
+  <setting propertyKey="@Properties.petDisplayName" title="@Strings.PetNameTitle" prompt="@Strings.PetNamePrompt">
+    <settingConfig type="alphaNumeric" required="true" maxLength="32"/>
+  </setting>
+  <setting propertyKey="@Properties.themeAccent" title="@Strings.ThemeAccentTitle" prompt="@Strings.ThemeAccentPrompt">
+    <settingConfig type="numeric" required="true"/>
+  </setting>
+  <setting propertyKey="@Properties.themeGood" title="@Strings.ThemeGoodTitle" prompt="@Strings.ThemeGoodPrompt">
+    <settingConfig type="numeric" required="true"/>
+  </setting>
+  <setting propertyKey="@Properties.themeWarn" title="@Strings.ThemeWarnTitle" prompt="@Strings.ThemeWarnPrompt">
+    <settingConfig type="numeric" required="true"/>
+  </setting>
+</settings>

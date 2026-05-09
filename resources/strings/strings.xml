@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<resources>
+  <string id="AppName">Codex Pet</string>
+  <string id="BridgeUrlTitle">Bridge URL</string>
+  <string id="BridgeUrlPrompt">HTTPS endpoint for /garmin/latest</string>
+  <string id="RefreshTitle">Auto refresh</string>
+  <string id="RefreshPrompt">Refresh Codex data while the app is open</string>
+  <string id="HapticsTitle">Haptic alerts</string>
+  <string id="HapticsPrompt">Vibrate when Codex task status changes</string>
+  <string id="PetNameTitle">Pet name</string>
+  <string id="PetNamePrompt">Name shown for this pet build</string>
+  <string id="ThemeAccentTitle">Accent color</string>
+  <string id="ThemeAccentPrompt">Decimal RGB color for active/running UI</string>
+  <string id="ThemeGoodTitle">Done color</string>
+  <string id="ThemeGoodPrompt">Decimal RGB color for completed tasks</string>
+  <string id="ThemeWarnTitle">Warning color</string>
+  <string id="ThemeWarnPrompt">Decimal RGB color for warnings</string>
+</resources>

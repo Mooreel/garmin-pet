@@ -1,0 +1,12 @@
+build/
+.venv/
+*.prg
+*.iq
+*.debug.xml
+developer_key*
+bridge_token.txt
+__pycache__/
+.DS_Store
+local_certs/
+pipeline/local.json
+pipeline/work/

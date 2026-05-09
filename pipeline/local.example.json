@@ -1,0 +1,18 @@
+{
+  "device": "fr265s",
+  "developerKey": "build/developer_key.der",
+  "bridgeMode": "auto",
+  "bridgeUrl": "",
+  "petDisplayName": "Monk",
+  "theme": {
+    "surface": "#000000",
+    "panel": "#111216",
+    "selection": "#251B5F",
+    "ink": "#FFFFFF",
+    "subtle": "#A8A6B6",
+    "accent": "#9A6CFF",
+    "review": "#32C8FF",
+    "good": "#42E76F",
+    "warn": "#FFA754"
+  }
+}
