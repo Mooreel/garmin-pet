@@ -8,7 +8,6 @@ const state = {
   uploadSelection: null,
   petdexResults: [],
   petdexSelected: null,
-  petdexMode: 'popular',
   petdexError: null,
   petdexRequestId: 0,
   petdexSearchTimer: null,
@@ -667,19 +666,6 @@ function compactNumber(value) {
   return `${Math.round(number / 1000)}k`;
 }
 
-function petDexSubtitle(pet) {
-  const vibes = Array.isArray(pet.vibes) ? pet.vibes.slice(0, 3).map((item) => `#${item}`).join(' ') : '';
-  return [pet.kind, vibes].filter(Boolean).join(' / ');
-}
-
-function petDexMetrics(pet) {
-  const metrics = pet.metrics || {};
-  const parts = [];
-  if (metrics.installCount) parts.push(`${compactNumber(metrics.installCount)} installs`);
-  if (metrics.likeCount) parts.push(`${compactNumber(metrics.likeCount)} likes`);
-  return parts.join(' / ');
-}
-
 function petDexInstallCount(pet) {
   const count = Number(pet?.metrics?.installCount) || 0;
   return `${compactNumber(count)} installs`;
@@ -696,7 +682,7 @@ function petDexErrorMessage(error) {
 function renderPetDexResults() {
   const container = $('petDexResults');
   container.textContent = '';
-  container.className = `petDexResults${state.petdexMode === 'preview' ? ' preview' : ''}`;
+  container.className = 'petDexResults';
 
   if (state.petdexError) {
     const problem = document.createElement('div');
@@ -729,8 +715,7 @@ function renderPetDexResults() {
     return;
   }
 
-  const previewMode = state.petdexMode === 'preview';
-  const pets = previewMode ? state.petdexResults.slice(0, 4) : state.petdexResults;
+  const pets = state.petdexResults.slice(0, 4);
 
   pets.forEach((pet) => {
     const card = document.createElement('button');
@@ -738,12 +723,13 @@ function renderPetDexResults() {
     card.className = `petDexCard${state.petdexSelected?.slug === pet.slug ? ' selected' : ''}`;
     card.dataset.slug = pet.slug;
 
-    if (!previewMode) {
-      const thumb = document.createElement('span');
-      thumb.className = 'petDexThumb';
-      if (pet.spritesheetPath) thumb.style.backgroundImage = `url("${pet.spritesheetPath}")`;
-      card.appendChild(thumb);
+    const thumb = document.createElement('span');
+    thumb.className = 'petDexThumb';
+    if (pet.spritesheetPath) {
+      thumb.classList.add('spriteFallback');
+      thumb.style.setProperty('--petdex-sheet', `url("${pet.spritesheetPath}")`);
     }
+    card.appendChild(thumb);
 
     const body = document.createElement('span');
     body.className = 'petDexBody';
@@ -752,26 +738,9 @@ function renderPetDexResults() {
     name.textContent = pet.displayName || pet.slug;
     body.appendChild(name);
 
-    if (previewMode) {
-      const metricRow = document.createElement('small');
-      metricRow.textContent = petDexInstallCount(pet);
-      body.appendChild(metricRow);
-    } else {
-      const subtitle = document.createElement('span');
-      subtitle.textContent = petDexSubtitle(pet) || 'Codex pet';
-      body.appendChild(subtitle);
-
-      const description = document.createElement('em');
-      description.textContent = pet.description || 'Ready to import from Petdex.';
-      body.appendChild(description);
-
-      const metrics = petDexMetrics(pet);
-      if (metrics) {
-        const metricRow = document.createElement('small');
-        metricRow.textContent = metrics;
-        body.appendChild(metricRow);
-      }
-    }
+    const metricRow = document.createElement('small');
+    metricRow.textContent = petDexInstallCount(pet);
+    body.appendChild(metricRow);
 
     card.appendChild(body);
     card.addEventListener('click', () => setPetDexSelected(pet));
@@ -784,7 +753,6 @@ function setPetDexSelected(pet) {
   $('importPetDexBtn').disabled = !pet;
   if (pet) {
     state.uploadSelection = null;
-    $('uploadBtn').disabled = true;
     setUploadFeedback('', 'Petdex pet selected. Import it or drop a local package instead.');
     $('selectedPetFile').textContent = `Petdex: ${pet.displayName || pet.slug}`;
     $('sheetPet').textContent = pet.displayName || pet.slug;
@@ -795,9 +763,7 @@ function setPetDexSelected(pet) {
 
 async function searchPetDex(options = {}) {
   const query = $('petDexSearch').value.trim();
-  const typing = Boolean(options.typing);
-  const preview = typing && Boolean(query);
-  const limit = preview ? '4' : '8';
+  const limit = '4';
   const requestId = ++state.petdexRequestId;
   const params = new URLSearchParams({
     sort: $('petDexSort').value,
@@ -805,14 +771,13 @@ async function searchPetDex(options = {}) {
   });
   if (query) params.set('q', query);
 
-  state.petdexMode = preview ? 'preview' : query ? 'search' : 'popular';
   state.petdexError = null;
   if (!options.keepButtonLabel) {
-    $('petDexSearchBtn').textContent = preview ? 'Search more' : 'Search Petdex';
+    $('petDexSearchBtn').textContent = 'Search';
   }
   $('petDexStatus').textContent = query
-    ? preview ? `Finding top Petdex hits for "${query}"...` : `Searching Petdex for "${query}"...`
-    : 'Loading popular Petdex pets...';
+    ? `Finding top Petdex hits for "${query}"...`
+    : 'Loading top Petdex pets...';
   try {
     const result = await api(`/api/petdex/search?${params}`);
     if (requestId !== state.petdexRequestId) return;
@@ -823,13 +788,13 @@ async function searchPetDex(options = {}) {
       $('importPetDexBtn').disabled = true;
     }
     renderPetDexResults();
-    const count = Number(result.total) || state.petdexResults.length;
     if (!state.petdexResults.length) {
       $('petDexStatus').textContent = query ? `No Petdex pets matched "${query}".` : 'No Petdex pets loaded yet.';
-    } else if (preview) {
-      $('petDexStatus').textContent = `Top ${Math.min(state.petdexResults.length, 4)} hit${state.petdexResults.length === 1 ? '' : 's'} for "${query}". Press Search more for the full list.`;
     } else {
-      $('petDexStatus').textContent = `${state.petdexResults.length} shown from ${count} Petdex match${count === 1 ? '' : 'es'}.`;
+      const shown = Math.min(state.petdexResults.length, 4);
+      $('petDexStatus').textContent = query
+        ? `Top ${shown} hit${shown === 1 ? '' : 's'} for "${query}".`
+        : `Top ${shown} popular Petdex pet${shown === 1 ? '' : 's'}.`;
     }
   } catch (error) {
     if (requestId !== state.petdexRequestId) return;
@@ -845,13 +810,12 @@ async function searchPetDex(options = {}) {
 }
 
 async function searchPetDexFromButton() {
-  const query = $('petDexSearch').value.trim();
   const button = setButtonBusy('petDexSearchBtn', 'Searching');
   try {
     await searchPetDex({ keepButtonLabel: true });
-    await completeButton(button, 'Found', query ? 'Search more' : 'Search Petdex');
+    await completeButton(button, 'Found', 'Search');
   } catch (error) {
-    resetActionButton(button, query ? 'Search more' : 'Search Petdex');
+    resetActionButton(button, 'Search');
     throw error;
   }
 }
@@ -899,13 +863,11 @@ function setUploadSelection(selection) {
   }
   if (!selection) {
     $('selectedPetFile').textContent = 'Drop in a package';
-    $('uploadBtn').disabled = true;
     setUploadFeedback('', 'Drop a pet to export and preview it automatically.');
     return;
   }
   $('selectedPetFile').textContent = selection.label;
   $('sheetPet').textContent = displayNameFor(selection);
-  $('uploadBtn').disabled = false;
   setUploadFeedback('uploading', `Reading ${selection.label}...`);
   mark('upload', 'active');
   renderWatchPreview();
@@ -1039,7 +1001,6 @@ async function uploadPet(selection = state.uploadSelection || createUploadSelect
     return;
   }
   const requestId = ++state.uploadRequestId;
-  const button = setButtonBusy('uploadBtn', 'Exporting');
   mark('upload', 'active');
   $('selectedPetFile').textContent = selection.label;
   $('sheetPet').textContent = displayNameFor(selection);
@@ -1058,7 +1019,6 @@ async function uploadPet(selection = state.uploadSelection || createUploadSelect
     $('sheetPet').textContent = petName;
     $('selectedPetFile').textContent = petName;
     state.previewMessage = `${petName} is ready on the watch preview`;
-    await completeButton(button, 'Exported', 'Re-export selected pet');
     mark('upload', 'done');
     mark('preview', 'done');
     state.petAssetVersion = Date.now();
@@ -1070,7 +1030,6 @@ async function uploadPet(selection = state.uploadSelection || createUploadSelect
     if (requestId === state.uploadRequestId) {
       setUploadFeedback('error', error.message || 'Pet import failed.');
     }
-    resetActionButton(button, 'Re-export selected pet');
     throw error;
   }
 }
@@ -1276,12 +1235,11 @@ function handleError(step) {
 }
 
 $('configForm').addEventListener('submit', (event) => saveConfig(event).catch(handleError('theme')));
-$('uploadBtn').addEventListener('click', () => uploadPet().catch(handleError('upload')));
 $('importPetDexBtn').addEventListener('click', () => importPetDex().catch(handleError('upload')));
 $('petDexSearchBtn').addEventListener('click', () => searchPetDexFromButton().catch(handleError('upload')));
 $('petDexSearch').addEventListener('input', () => {
   window.clearTimeout(state.petdexSearchTimer);
-  state.petdexSearchTimer = window.setTimeout(() => searchPetDex({ typing: true }), 280);
+  state.petdexSearchTimer = window.setTimeout(() => searchPetDex(), 280);
 });
 $('petDexSort').addEventListener('change', () => searchPetDex());
 $('securityBtn').addEventListener('click', () => runSecurity().catch(handleError('build')));

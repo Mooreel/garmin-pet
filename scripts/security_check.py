@@ -11,10 +11,16 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 DENY_PATH_PARTS = {
+    ".env",
     "bridge_token.txt",
+    "pipeline/local.json",
     "local_certs/",
     "build/",
     "developer_key",
+    ".pem",
+    ".p12",
+    ".jks",
+    ".keystore",
 }
 PATTERNS = [
     re.compile(r"token=[0-9a-fA-F]{16,}"),

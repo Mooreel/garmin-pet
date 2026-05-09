@@ -72,10 +72,46 @@
         </section>
 
         <section class="panels" aria-label="Pipeline controls">
+          <section class="panel uploadPanel">
+            <div class="panelHead">
+              <span>Pet</span>
+              <h2>Pet selection</h2>
+            </div>
+            <div class="petDexPicker" aria-label="Petdex picker">
+              <div class="petDexTools">
+                <label>Find on Petdex
+                  <input id="petDexSearch" autocomplete="off" spellcheck="false" placeholder="Boba, dragon, cozy coder" />
+                </label>
+                <label>Sort
+                  <select id="petDexSort">
+                    <option value="popular">Popular</option>
+                    <option value="installed">Most installed</option>
+                    <option value="recent">Newest</option>
+                    <option value="alpha">A to Z</option>
+                    <option value="curated">Curated</option>
+                  </select>
+                </label>
+                <button id="petDexSearchBtn" class="button secondary" type="button">Search</button>
+              </div>
+              <div id="petDexStatus" class="petDexStatus" aria-live="polite">Search Petdex or pick from popular pets.</div>
+              <div id="petDexResults" class="petDexResults" aria-live="polite"></div>
+              <button id="importPetDexBtn" class="button primary" type="button" disabled>Import selected pet</button>
+            </div>
+            <div class="uploadDivider"><span>or manual package</span></div>
+            <label id="petDropZone" class="fileDrop" for="petFile">
+              <strong>Drop ZIP or pet folder</strong>
+              <span>Use a ZIP, one spritesheet.webp, or a folder with pet.json and spritesheet.webp.</span>
+              <input id="petFile" type="file" accept=".zip,.webp,.json" multiple />
+            </label>
+            <div id="uploadStatus" class="uploadStatus" aria-live="polite">Drop a pet to export and preview it automatically.</div>
+            <input id="petFolder" class="hiddenInput" type="file" webkitdirectory directory multiple />
+            <button id="folderBtn" class="button secondary" type="button">Choose folder</button>
+          </section>
+
           <form id="configForm" class="panel configPanel">
             <div class="panelHead">
               <span>Setup</span>
-              <h2>Device recipe</h2>
+              <h2>Watch & colors</h2>
             </div>
 
             <label>Watch
@@ -102,43 +138,6 @@
 
             <button class="button primary" type="submit">Save recipe</button>
           </form>
-
-          <section class="panel uploadPanel">
-            <div class="panelHead">
-              <span>Pet</span>
-              <h2>Frame export</h2>
-            </div>
-            <div class="petDexPicker" aria-label="Petdex picker">
-              <div class="petDexTools">
-                <label>Find on Petdex
-                  <input id="petDexSearch" autocomplete="off" spellcheck="false" placeholder="Boba, dragon, cozy coder" />
-                </label>
-                <label>Sort
-                  <select id="petDexSort">
-                    <option value="popular">Popular</option>
-                    <option value="installed">Most installed</option>
-                    <option value="recent">Newest</option>
-                    <option value="alpha">A to Z</option>
-                    <option value="curated">Curated</option>
-                  </select>
-                </label>
-              </div>
-              <button id="petDexSearchBtn" class="button secondary" type="button">Search Petdex</button>
-              <div id="petDexStatus" class="petDexStatus" aria-live="polite">Search Petdex or pick from popular pets.</div>
-              <div id="petDexResults" class="petDexResults" aria-live="polite"></div>
-              <button id="importPetDexBtn" class="button primary" type="button" disabled>Import selected pet</button>
-            </div>
-            <div class="uploadDivider"><span>or manual package</span></div>
-            <label id="petDropZone" class="fileDrop" for="petFile">
-              <strong>Drop ZIP or pet folder</strong>
-              <span>Use a ZIP, one spritesheet.webp, or a folder with pet.json and spritesheet.webp.</span>
-              <input id="petFile" type="file" accept=".zip,.webp,.json" multiple />
-            </label>
-            <div id="uploadStatus" class="uploadStatus" aria-live="polite">Drop a pet to export and preview it automatically.</div>
-            <input id="petFolder" class="hiddenInput" type="file" webkitdirectory directory multiple />
-            <button id="folderBtn" class="button secondary" type="button">Choose folder</button>
-            <button id="uploadBtn" class="button primary" type="button" disabled>Re-export selected pet</button>
-          </section>
 
           <section class="panel actions">
             <div class="panelHead">
