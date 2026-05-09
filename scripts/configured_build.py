@@ -40,6 +40,8 @@ def generated_bridge_url() -> str:
 
 
 def resolved_bridge_url(config: dict) -> str:
+    if str(config.get("bridgeMode") or "auto").strip().lower() == "auto":
+        return generated_bridge_url()
     raw = str(config.get("bridgeUrl") or "").strip()
     if raw and (allow_loopback_bridge() or not is_loopback_bridge(raw)):
         return raw

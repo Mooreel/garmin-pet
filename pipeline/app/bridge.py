@@ -100,6 +100,62 @@ def _interface_ip(name: str) -> str:
     return ""
 
 
+def _networksetup_devices(port_names: tuple[str, ...]) -> list[str]:
+    try:
+        result = subprocess.run(["networksetup", "-listallhardwareports"], text=True, capture_output=True, timeout=2)
+    except Exception:
+        return []
+    if result.returncode != 0:
+        return []
+
+    devices: list[str] = []
+    current_port = ""
+    normalized_names = tuple(name.lower() for name in port_names)
+    for line in result.stdout.splitlines():
+        text = line.strip()
+        if text.startswith("Hardware Port:"):
+            current_port = text.split(":", 1)[1].strip().lower()
+        elif text.startswith("Device:") and current_port:
+            device = text.split(":", 1)[1].strip()
+            if device and any(name in current_port for name in normalized_names):
+                devices.append(device)
+    return devices
+
+
+def _ifconfig_interface_ips() -> list[tuple[str, str, bool]]:
+    try:
+        result = subprocess.run(["ifconfig"], text=True, capture_output=True, timeout=2)
+    except Exception:
+        return []
+    if result.returncode != 0:
+        return []
+
+    interfaces: list[tuple[str, str, bool]] = []
+    blocks: list[tuple[str, list[str]]] = []
+    name = ""
+    block: list[str] = []
+    for line in result.stdout.splitlines():
+        if line and not line.startswith(("\t", " ")):
+            if name:
+                blocks.append((name, block))
+            name = line.split(":", 1)[0]
+            block = [line]
+            continue
+        if name:
+            block.append(line)
+    if name:
+        blocks.append((name, block))
+
+    for interface, lines in blocks:
+        text = "\n".join(lines)
+        is_wired = "VLAN_HWTAGGING" in text
+        for line in lines:
+            stripped = line.strip()
+            if stripped.startswith("inet "):
+                interfaces.append((interface, stripped.split()[1], is_wired))
+    return interfaces
+
+
 def _route_ip() -> str:
     try:
         sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -129,12 +185,25 @@ def _host_header_host(headers: Any) -> str:
 
 
 def candidate_lan_hosts(headers: Any | None = None) -> list[str]:
+    wifi_devices = _networksetup_devices(("wi-fi", "airport"))
+    wired_devices = _networksetup_devices(("ethernet", "thunderbolt"))
+    discovered_interfaces = _ifconfig_interface_ips()
+    wifi_fallback = [
+        ip for name, ip, is_wired in discovered_interfaces
+        if name.startswith("en") and name not in wired_devices and not is_wired
+    ]
+    wired_fallback = [
+        ip for name, ip, is_wired in discovered_interfaces
+        if name.startswith("en") and (name in wired_devices or is_wired)
+    ]
     candidates = [
         os.environ.get("GARMIN_PET_HOST", ""),
         os.environ.get("GARMIN_BRIDGE_HOST", ""),
         _host_header_host(headers),
-        _interface_ip("en0"),
-        _interface_ip("en1"),
+        *(_interface_ip(name) for name in wifi_devices),
+        *wifi_fallback,
+        *(_interface_ip(name) for name in wired_devices),
+        *wired_fallback,
         _route_ip(),
     ]
 
