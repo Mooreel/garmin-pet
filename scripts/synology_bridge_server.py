@@ -10,6 +10,7 @@ from __future__ import annotations
 import argparse
 from datetime import datetime, timezone
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
+import html
 import json
 from pathlib import Path
 from urllib.parse import parse_qs, urlparse
@@ -124,14 +125,38 @@ class Handler(BaseHTTPRequestHandler):
             return
 
         if parsed.path in {"", "/"}:
+            payload = self.state.latest_payload()
+            pet = payload.get("pet", {}) if isinstance(payload.get("pet"), dict) else {}
+            messages = payload.get("messages", [])
+            top = messages[0] if isinstance(messages, list) and messages and isinstance(messages[0], dict) else {}
+            pet_name = html.escape(str(pet.get("displayName") or "Codex Pet"))
+            pet_state = html.escape(str(pet.get("state") or "idle"))
+            updated = html.escape(str(payload.get("updatedAt") or payload.get("generatedAt") or ""))
+            latest = html.escape(str(top.get("body") or payload.get("summary") or "No payload published yet."))
             body = (
                 "<!doctype html><meta charset='utf-8'>"
-                "<title>Garmin Pet Bridge</title>"
-                "<style>body{font:16px system-ui;margin:3rem;max-width:42rem;line-height:1.45}</style>"
-                "<h1>Garmin Pet Bridge</h1>"
-                "<p>The Synology watch bridge is online.</p>"
-                f"<p>Endpoint: <code>{BRIDGE_PATH}</code></p>"
-                "<p>Publish updates from the Mac pipeline with <code>scripts/synology/publish_payload.sh</code>.</p>"
+                "<title>Garmin Pet Dashboard</title>"
+                "<style>"
+                "body{font:16px system-ui;margin:0;min-height:100vh;background:#eef4ef;color:#102018;display:grid;place-items:center}"
+                "main{width:min(680px,calc(100vw - 36px));background:#fff;border:1px solid #cddbd1;border-radius:18px;padding:28px;box-shadow:0 18px 60px #17352220}"
+                "h1{margin:0 0 10px;font-size:28px} p{line-height:1.5} code{background:#eef4ef;border-radius:6px;padding:2px 6px}"
+                ".status{display:inline-flex;gap:8px;align-items:center;background:#d9fbe2;color:#0d5f28;border-radius:999px;padding:7px 11px;font-weight:800}"
+                ".grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:18px}.card{border:1px solid #dbe7df;border-radius:12px;padding:14px;background:#fbfdfb}"
+                "strong{display:block;margin-bottom:6px}.muted{color:#587060}"
+                "</style>"
+                "<main>"
+                "<span class='status'>Online</span>"
+                "<h1>Garmin Pet Dashboard</h1>"
+                "<p>The Synology watch bridge is serving the latest payload for your Garmin app.</p>"
+                "<div class='grid'>"
+                f"<section class='card'><strong>Pet</strong><span>{pet_name}</span></section>"
+                f"<section class='card'><strong>State</strong><span>{pet_state}</span></section>"
+                f"<section class='card'><strong>Updated</strong><span>{updated}</span></section>"
+                f"<section class='card'><strong>Endpoint</strong><code>{BRIDGE_PATH}</code></section>"
+                "</div>"
+                f"<p><strong>Latest</strong>{latest}</p>"
+                "<p class='muted'>Publish updates from the Mac with <code>scripts/synology/publish_payload.sh</code>.</p>"
+                "</main>"
             ).encode("utf-8")
             self.send_response(200)
             self.send_header("Content-Type", "text/html; charset=utf-8")

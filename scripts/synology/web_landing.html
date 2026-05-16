@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Synology Apps</title>
+    <style>
+      body {
+        align-items: center;
+        background: #f4f7fb;
+        color: #102033;
+        display: flex;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        justify-content: center;
+        min-height: 100vh;
+        margin: 0;
+      }
+      main {
+        background: #ffffff;
+        border: 1px solid #d9e2ec;
+        border-radius: 14px;
+        box-shadow: 0 18px 50px rgba(16, 32, 51, 0.12);
+        max-width: 520px;
+        padding: 28px;
+      }
+      a {
+        color: #2463eb;
+        font-weight: 800;
+      }
+    </style>
+    <script>
+      const routes = {
+        'financing.local': 'http://financing.local:8765/',
+        'pet.local': 'http://pet.local:8790/',
+      };
+      const target = routes[location.hostname.toLowerCase()];
+      if (target) location.replace(target);
+    </script>
+  </head>
+  <body>
+    <main>
+      <h1>Synology Apps</h1>
+      <p>Garmin Pet is available at <a href="http://pet.local:8790/">pet.local:8790</a>.</p>
+      <p>Financing Planner is available at <a href="http://financing.local:8765/">financing.local:8765</a>.</p>
+    </main>
+  </body>
+</html>

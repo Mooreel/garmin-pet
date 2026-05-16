@@ -29,6 +29,7 @@ Synology SSH host: synology
 Synology directory: /volume1/homes/nico/development/garmin-pet-bridge
 Bridge port: 8790
 Public host embedded into Garmin builds: synology.local
+mDNS browser alias: pet.local -> 192.168.0.246
 ```
 
 Override them when needed:
@@ -43,6 +44,10 @@ scripts/synology/deploy_bridge.sh
 The script copies the small bridge server, publishes the current payload, starts
 the Synology process, and updates `pipeline/local.json` so future builds use the
 NAS bridge URL.
+
+It also starts a lightweight mDNS alias publisher for `pet.local`. Opening
+`http://pet.local/` lands on Synology Web Station, which redirects to the bridge
+dashboard at `http://pet.local:8790/`.
 
 ## Publish updates
 
@@ -77,6 +82,7 @@ resolve on the LAN before a watch or phone can use it.
 
 Good options:
 
+- Use the included user-space mDNS alias publisher started by `deploy_bridge.sh`.
 - Add `pet.local` as a local DNS record or alias in the router.
 - Add an mDNS/Bonjour alias on the Synology if you manage Avahi as admin.
 - Use `synology.local` as the public bridge host if you want the zero-admin setup.

@@ -133,6 +133,13 @@ GARMIN_PUBLIC_BRIDGE_HOST=pet.local scripts/synology/deploy_bridge.sh
 
 See [docs/SYNOLOGY_BRIDGE.md](docs/SYNOLOGY_BRIDGE.md) for the full setup and reboot notes.
 
+On Nico's Synology setup, `pet.local` is published through a small mDNS alias
+process and the browser dashboard is available at:
+
+```text
+http://pet.local:8790/
+```
+
 ## Build From The Browser
 
 Use the web UI at `http://127.0.0.1:8790`.

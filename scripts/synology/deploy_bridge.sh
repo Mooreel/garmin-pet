@@ -7,6 +7,9 @@ REMOTE_DIR="${GARMIN_SYNOLOGY_DIR:-/volume1/homes/nico/development/garmin-pet-br
 PORT="${GARMIN_BRIDGE_PORT:-8790}"
 PUBLIC_HOST="${GARMIN_PUBLIC_BRIDGE_HOST:-synology.local}"
 BRIDGE_URL="http://$PUBLIC_HOST:$PORT/garmin/latest"
+MDNS_ALIAS="${GARMIN_MDNS_ALIAS:-pet.local}"
+MDNS_ADDRESS="${GARMIN_MDNS_ADDRESS:-192.168.0.246}"
+WEB_ROOT="${GARMIN_SYNOLOGY_WEB_ROOT:-/volume2/web}"
 
 TOKEN="$(cd "$ROOT" && GARMIN_BRIDGE_TOKEN_PATH="$ROOT/bridge_token.txt" python3 - <<'PY'
 from pathlib import Path
@@ -31,9 +34,12 @@ scp -O -q \
   "$ROOT/scripts/synology_bridge_server.py" \
   "$ROOT/scripts/synology/start_bridge.sh" \
   "$ROOT/scripts/synology/stop_bridge.sh" \
+  "$ROOT/scripts/synology/mdns_alias.py" \
+  "$ROOT/scripts/synology/start_mdns_alias.sh" \
+  "$ROOT/scripts/synology/stop_mdns_alias.sh" \
   "$TMP_TOKEN" \
   "$REMOTE:$REMOTE_DIR/"
-ssh -o BatchMode=yes "$REMOTE" "mv '$REMOTE_DIR/$(basename "$TMP_TOKEN")' '$REMOTE_DIR/bridge_token.txt' && chmod 700 '$REMOTE_DIR' && chmod 755 '$REMOTE_DIR/start_bridge.sh' '$REMOTE_DIR/stop_bridge.sh' '$REMOTE_DIR/synology_bridge_server.py' && chmod 600 '$REMOTE_DIR/bridge_token.txt'"
+ssh -o BatchMode=yes "$REMOTE" "mv '$REMOTE_DIR/$(basename "$TMP_TOKEN")' '$REMOTE_DIR/bridge_token.txt' && chmod 700 '$REMOTE_DIR' && chmod 755 '$REMOTE_DIR/start_bridge.sh' '$REMOTE_DIR/stop_bridge.sh' '$REMOTE_DIR/synology_bridge_server.py' '$REMOTE_DIR/mdns_alias.py' '$REMOTE_DIR/start_mdns_alias.sh' '$REMOTE_DIR/stop_mdns_alias.sh' && chmod 600 '$REMOTE_DIR/bridge_token.txt'"
 
 GARMIN_SYNOLOGY_HOST="$REMOTE" \
 GARMIN_SYNOLOGY_DIR="$REMOTE_DIR" \
@@ -42,6 +48,8 @@ GARMIN_PUBLIC_BRIDGE_HOST="$PUBLIC_HOST" \
 "$ROOT/scripts/synology/publish_payload.sh"
 
 ssh -o BatchMode=yes "$REMOTE" "cd '$REMOTE_DIR' && GARMIN_BRIDGE_PORT='$PORT' ./start_bridge.sh"
+ssh -o BatchMode=yes "$REMOTE" "cd '$REMOTE_DIR' && GARMIN_MDNS_ALIAS='$MDNS_ALIAS' GARMIN_MDNS_ADDRESS='$MDNS_ADDRESS' ./start_mdns_alias.sh"
+scp -O -q "$ROOT/scripts/synology/web_landing.html" "$REMOTE:$WEB_ROOT/index.html"
 
 python3 - "$ROOT" "$BRIDGE_URL" <<'PY'
 import json
