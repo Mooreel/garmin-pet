@@ -216,11 +216,12 @@ function updateConfigHistory(history) {
 }
 
 function collectConfig() {
+  const bridgeMode = state.config?.bridgeMode === 'manual' ? 'manual' : 'auto';
   return {
     device: $('device').value,
     developerKey: state.config?.developerKey || 'build/developer_key.der',
-    bridgeMode: 'auto',
-    bridgeUrl: state.bridge?.url || $('bridgeUrl').value.trim(),
+    bridgeMode,
+    bridgeUrl: bridgeMode === 'manual' ? $('bridgeUrl').value.trim() : state.bridge?.url || $('bridgeUrl').value.trim(),
     petDisplayName: $('petDisplayName').value.trim() || 'Codex Pet',
     theme: {
       surface: '#000000',
@@ -252,7 +253,9 @@ function renderBridgeStatus() {
   const bridge = state.bridge || {};
   const port = bridge.port || '';
   const host = bridge.host || '';
-  if (bridge.samePort && bridge.lanReachableFromMac === false) {
+  if (state.config?.bridgeMode === 'manual' && $('bridgeUrl').value.trim()) {
+    $('bridgeMode').textContent = `Manual bridge: ${compactUrl($('bridgeUrl').value.trim())}`;
+  } else if (bridge.samePort && bridge.lanReachableFromMac === false) {
     $('bridgeMode').textContent = `LAN bridge not reachable on ${host || 'Mac'}${port ? `:${port}` : ''}. Restart with scripts/start.sh.`;
   } else if (bridge.samePort) {
     $('bridgeMode').textContent = `Auto: same server port${port ? ` ${port}` : ''}${host ? ` on ${host}` : ''}. If the watch shows -300, rebuild and check iPhone Local Network/WiFi.`;

@@ -105,6 +105,34 @@ http://<mac-lan-ip>:8790/garmin/latest?token=<local-token>
 
 You do not need to configure a second bridge server. The pipeline detects the Mac LAN address, creates a token, and injects the correct bridge URL when you save/build.
 
+## Optional Always-on Synology Bridge
+
+If you do not want the Mac pipeline server running all day, host only the watch bridge on a Synology NAS:
+
+```bash
+scripts/synology/deploy_bridge.sh
+```
+
+That starts a small Python bridge on the Synology and updates local builds to use:
+
+```text
+http://synology.local:8790/garmin/latest?token=<local-token>
+```
+
+The Mac is still needed for pet import, preview, Garmin SDK builds, and USB deploy. The NAS only keeps the watch endpoint available. After using Codex on the Mac, publish the latest payload to the NAS:
+
+```bash
+scripts/synology/publish_payload.sh
+```
+
+For a custom `pet.local` URL, make sure `pet.local` resolves on your LAN through router DNS or an mDNS/Bonjour alias, then deploy with:
+
+```bash
+GARMIN_PUBLIC_BRIDGE_HOST=pet.local scripts/synology/deploy_bridge.sh
+```
+
+See [docs/SYNOLOGY_BRIDGE.md](docs/SYNOLOGY_BRIDGE.md) for the full setup and reboot notes.
+
 ## Build From The Browser
 
 Use the web UI at `http://127.0.0.1:8790`.

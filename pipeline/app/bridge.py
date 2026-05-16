@@ -235,8 +235,23 @@ def bridge_url(headers: Any | None, server_address: Any, scheme: str = "http") -
     return f"{scheme}://{host}:{port}{BRIDGE_PATH}?token={token}"
 
 
+def _is_remote_bridge_url(value: str) -> bool:
+    try:
+        parsed = urlparse(str(value or "").strip())
+    except Exception:
+        return False
+    if parsed.scheme not in {"http", "https"} or not parsed.hostname:
+        return False
+    return _is_usable_lan_host(parsed.hostname)
+
+
 def apply_pipeline_bridge(config: dict, headers: Any | None, server_address: Any) -> dict:
     resolved = dict(config)
+    mode = str(resolved.get("bridgeMode") or "auto").strip().lower()
+    if mode == "manual" and _is_remote_bridge_url(str(resolved.get("bridgeUrl") or "")):
+        resolved["bridgeMode"] = "manual"
+        return resolved
+
     resolved["bridgeMode"] = "auto"
     resolved["bridgeUrl"] = bridge_url(headers, server_address)
     return resolved

@@ -39,7 +39,17 @@ def generated_bridge_url() -> str:
     return bridge_url(None, ("0.0.0.0", 8790))
 
 
+def env_bridge_url() -> str:
+    raw = os.environ.get("GARMIN_BRIDGE_URL", "").strip()
+    if raw and (allow_loopback_bridge() or not is_loopback_bridge(raw)):
+        return raw
+    return ""
+
+
 def resolved_bridge_url(config: dict) -> str:
+    override = env_bridge_url()
+    if override:
+        return override
     if str(config.get("bridgeMode") or "auto").strip().lower() == "auto":
         return generated_bridge_url()
     raw = str(config.get("bridgeUrl") or "").strip()
