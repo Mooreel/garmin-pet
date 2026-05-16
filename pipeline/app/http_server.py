@@ -79,8 +79,8 @@ class Handler(BaseHTTPRequestHandler):
     def pipeline_config(self, config: dict) -> dict:
         return bridge.apply_pipeline_bridge(config, self.headers, self.server.server_address)
 
-    def bridge_status(self) -> dict:
-        return bridge.bridge_status(self.headers, self.server.server_address)
+    def bridge_status(self, config: dict | None = None) -> dict:
+        return bridge.bridge_status(self.headers, self.server.server_address, config or current_config())
 
     def do_GET(self) -> None:
         parsed = urlparse(self.path)

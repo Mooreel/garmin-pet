@@ -112,9 +112,9 @@ class CodexStateModel {
 
         if (responseCode != 200 || data == null || !(data instanceof Lang.Dictionary)) {
             hasNetworkError = true;
-            status = "Bridge " + responseCode;
+            status = bridgeStatusLabel(responseCode);
             messages = [
-                { :title => "Bridge offline", :body => bridgeErrorText(responseCode), :tone => "warning", :time => "" }
+                { :title => bridgeErrorTitle(responseCode), :body => bridgeErrorText(responseCode), :tone => "warning", :time => "" }
             ];
             resetDetailRenderMetrics();
             WatchUi.requestUpdate();
@@ -185,6 +185,20 @@ class CodexStateModel {
             return fallback;
         }
         return value;
+    }
+
+    function bridgeStatusLabel(responseCode) {
+        if (responseCode == -104 || responseCode == -400) {
+            return "Phone " + responseCode;
+        }
+        return "Bridge " + responseCode;
+    }
+
+    function bridgeErrorTitle(responseCode) {
+        if (responseCode == -104 || responseCode == -400) {
+            return "Phone offline";
+        }
+        return "Bridge offline";
     }
 
     function bridgeErrorText(responseCode) {
@@ -529,6 +543,7 @@ class CodexStateModel {
             || codexTextEquals(title, "Codex done")
             || codexTextEquals(title, "Codex Pet")
             || codexTextEquals(title, "You")
+            || codexTextEquals(title, "Phone offline")
             || codexTextEquals(title, "Bridge offline");
     }
 

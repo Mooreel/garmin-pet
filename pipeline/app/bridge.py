@@ -273,7 +273,30 @@ def _server_allows_lan(server_address: Any) -> bool:
     return bind_host in {"", "0.0.0.0", "::"} or _is_usable_lan_host(bind_host)
 
 
-def bridge_status(headers: Any | None, server_address: Any) -> dict:
+def bridge_status(headers: Any | None, server_address: Any, config: dict | None = None) -> dict:
+    config = config or {}
+    manual_url = str(config.get("bridgeUrl") or "").strip()
+    if str(config.get("bridgeMode") or "").strip().lower() == "manual" and _is_remote_bridge_url(manual_url):
+        parsed = urlparse(manual_url)
+        port = parsed.port or (443 if parsed.scheme == "https" else 80)
+        reachable = _tcp_reachable(parsed.hostname or "", port)
+        return {
+            "ok": reachable,
+            "samePort": False,
+            "path": parsed.path or BRIDGE_PATH,
+            "host": parsed.hostname or "",
+            "port": port,
+            "url": manual_url,
+            "tokenRequired": bool(parse_qs(parsed.query).get("token")),
+            "lanCandidates": candidate_lan_hosts(headers),
+            "lanReachableFromMac": reachable,
+            "message": (
+                f"Manual watch bridge is configured on {parsed.hostname}:{port}."
+                if reachable
+                else f"Manual watch bridge is configured on {parsed.hostname}:{port}, but this Mac cannot reach it."
+            ),
+        }
+
     host = preferred_lan_host(headers)
     port = _server_port(server_address)
     lan_host = _is_usable_lan_host(host)
