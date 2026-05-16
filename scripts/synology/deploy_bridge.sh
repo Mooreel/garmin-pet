@@ -9,6 +9,7 @@ PUBLIC_HOST="${GARMIN_PUBLIC_BRIDGE_HOST:-synology.local}"
 BRIDGE_URL="http://$PUBLIC_HOST:$PORT/garmin/latest"
 MDNS_ALIAS="${GARMIN_MDNS_ALIAS:-pet.local}"
 MDNS_ADDRESS="${GARMIN_MDNS_ADDRESS:-192.168.0.246}"
+MDNS_ADDRESS6="${GARMIN_MDNS_ADDRESS6:-2a02:8388:e5ba:8400:9209:d0ff:fe2b:ef9b}"
 WEB_ROOT="${GARMIN_SYNOLOGY_WEB_ROOT:-/volume2/web}"
 
 TOKEN="$(cd "$ROOT" && GARMIN_BRIDGE_TOKEN_PATH="$ROOT/bridge_token.txt" python3 - <<'PY'
@@ -48,7 +49,7 @@ GARMIN_PUBLIC_BRIDGE_HOST="$PUBLIC_HOST" \
 "$ROOT/scripts/synology/publish_payload.sh"
 
 ssh -o BatchMode=yes "$REMOTE" "cd '$REMOTE_DIR' && GARMIN_BRIDGE_PORT='$PORT' ./start_bridge.sh"
-ssh -o BatchMode=yes "$REMOTE" "cd '$REMOTE_DIR' && GARMIN_MDNS_ALIAS='$MDNS_ALIAS' GARMIN_MDNS_ADDRESS='$MDNS_ADDRESS' ./start_mdns_alias.sh"
+ssh -o BatchMode=yes "$REMOTE" "cd '$REMOTE_DIR' && GARMIN_MDNS_ALIAS='$MDNS_ALIAS' GARMIN_MDNS_ADDRESS='$MDNS_ADDRESS' GARMIN_MDNS_ADDRESS6='$MDNS_ADDRESS6' ./start_mdns_alias.sh"
 scp -O -q "$ROOT/scripts/synology/web_landing.html" "$REMOTE:$WEB_ROOT/index.html"
 
 python3 - "$ROOT" "$BRIDGE_URL" <<'PY'

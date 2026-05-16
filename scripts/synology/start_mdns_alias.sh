@@ -4,6 +4,7 @@ set -eu
 DIR="$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)"
 ALIAS_NAME="${GARMIN_MDNS_ALIAS:-pet.local}"
 ADDRESS="${GARMIN_MDNS_ADDRESS:-192.168.0.246}"
+ADDRESS6="${GARMIN_MDNS_ADDRESS6:-2a02:8388:e5ba:8400:9209:d0ff:fe2b:ef9b}"
 PIDFILE="$DIR/mdns-alias.pid"
 LOGFILE="$DIR/mdns-alias.log"
 
@@ -17,7 +18,7 @@ if [ -f "$PIDFILE" ]; then
 fi
 
 cd "$DIR"
-nohup python3 mdns_alias.py --name "$ALIAS_NAME" --address "$ADDRESS" >"$LOGFILE" 2>&1 &
+nohup python3 mdns_alias.py --name "$ALIAS_NAME" --address "$ADDRESS" --address6 "$ADDRESS6" >"$LOGFILE" 2>&1 &
 PID="$!"
 echo "$PID" >"$PIDFILE"
 chmod 600 "$PIDFILE" "$LOGFILE" 2>/dev/null || true
