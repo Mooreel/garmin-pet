@@ -140,6 +140,9 @@ process and the browser dashboard is available at:
 http://pet.local:8790/
 ```
 
+If the Mac pipeline is running, that URL proxies the full browser pipeline from
+the Mac. If the Mac is offline, it falls back to the Synology bridge dashboard.
+
 ## Build From The Browser
 
 Use the web UI at `http://127.0.0.1:8790`.

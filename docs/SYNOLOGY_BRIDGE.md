@@ -47,7 +47,12 @@ NAS bridge URL.
 
 It also starts a lightweight mDNS alias publisher for `pet.local`. Opening
 `http://pet.local/` lands on Synology Web Station, which redirects to the bridge
-dashboard at `http://pet.local:8790/`.
+service at `http://pet.local:8790/`.
+
+When the Mac pipeline is running, `http://pet.local:8790/` proxies the full
+pipeline UI and API from the Mac. If the Mac pipeline is not reachable, the same
+URL falls back to the always-on Synology bridge dashboard. Build and deploy still
+need the Mac because Garmin SDK and USB access are local to it.
 
 ## Publish updates
 

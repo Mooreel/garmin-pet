@@ -11,6 +11,22 @@ MDNS_ALIAS="${GARMIN_MDNS_ALIAS:-pet.local}"
 MDNS_ADDRESS="${GARMIN_MDNS_ADDRESS:-192.168.0.246}"
 MDNS_ADDRESS6="${GARMIN_MDNS_ADDRESS6:-2a02:8388:e5ba:8400:9209:d0ff:fe2b:ef9b}"
 WEB_ROOT="${GARMIN_SYNOLOGY_WEB_ROOT:-/volume2/web}"
+PIPELINE_URL="${GARMIN_PIPELINE_URL:-}"
+
+if [ "$PIPELINE_URL" = "" ]; then
+  PIPELINE_URL="$(cd "$ROOT" && python3 - <<'PY'
+import sys
+from pathlib import Path
+
+root = Path.cwd()
+if str(root) not in sys.path:
+    sys.path.insert(0, str(root))
+from pipeline.app.bridge import preferred_lan_host
+
+print(f"http://{preferred_lan_host(None)}:8790")
+PY
+)"
+fi
 
 TOKEN="$(cd "$ROOT" && GARMIN_BRIDGE_TOKEN_PATH="$ROOT/bridge_token.txt" python3 - <<'PY'
 from pathlib import Path
@@ -48,7 +64,7 @@ GARMIN_BRIDGE_PORT="$PORT" \
 GARMIN_PUBLIC_BRIDGE_HOST="$PUBLIC_HOST" \
 "$ROOT/scripts/synology/publish_payload.sh"
 
-ssh -o BatchMode=yes "$REMOTE" "cd '$REMOTE_DIR' && GARMIN_BRIDGE_PORT='$PORT' ./start_bridge.sh"
+ssh -o BatchMode=yes "$REMOTE" "cd '$REMOTE_DIR' && ./stop_bridge.sh && GARMIN_BRIDGE_PORT='$PORT' GARMIN_PIPELINE_URL='$PIPELINE_URL' ./start_bridge.sh"
 ssh -o BatchMode=yes "$REMOTE" "cd '$REMOTE_DIR' && GARMIN_MDNS_ALIAS='$MDNS_ALIAS' GARMIN_MDNS_ADDRESS='$MDNS_ADDRESS' GARMIN_MDNS_ADDRESS6='$MDNS_ADDRESS6' ./start_mdns_alias.sh"
 scp -O -q "$ROOT/scripts/synology/web_landing.html" "$REMOTE:$WEB_ROOT/index.html"
 
@@ -71,3 +87,5 @@ PY
 
 echo "Configured local builds to use: http://$PUBLIC_HOST:$PORT/garmin/latest?token=..."
 echo "Open bridge health: http://$PUBLIC_HOST:$PORT/health"
+echo "Open pipeline proxy: http://$PUBLIC_HOST:$PORT/"
+echo "Proxy target: $PIPELINE_URL"
