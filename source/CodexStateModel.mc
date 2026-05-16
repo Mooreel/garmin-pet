@@ -96,6 +96,18 @@ class CodexStateModel {
             return;
         }
 
+        if (!isPhoneConnected()) {
+            hasNetworkError = true;
+            status = "Phone offline";
+            messages = [
+                { :title => "Phone offline", :body => "Open Garmin Connect on the phone, wait for sync, then keep this app open.", :tone => "warning", :time => "" }
+            ];
+            lastRequestMs = now;
+            resetDetailRenderMetrics();
+            WatchUi.requestUpdate();
+            return;
+        }
+
         isLoading = true;
         lastRequestMs = now;
 
@@ -105,6 +117,10 @@ class CodexStateModel {
         };
 
         Communications.makeWebRequest(endpoint, {}, options, method(:onResponse));
+    }
+
+    function isPhoneConnected() {
+        return System.getDeviceSettings().phoneConnected;
     }
 
     function onResponse(responseCode as Lang.Number, data as Lang.Dictionary or Lang.String or PersistedContent.Iterator or Null) as Void {
